@@ -39,7 +39,7 @@
       }
     `);
 
-      iframe.src = 'https://loytech-aichatbot.vercel.app/chatbot/chatbot';
+      iframe.src = 'https://loytech-aichatbot.vercel.app/chatbot';
       iframe.classList.add('chat-frame');
       document.body.appendChild(iframe);
 
@@ -55,8 +55,7 @@
       };
 
       window.addEventListener('message', (e) => {
-        if (e.origin !== 'https://loytech-aichatbot.vercel.app/chatbot')
-          return null;
+        if (e.origin !== 'https://loytech-aichatbot.vercel.app') return null;
 
         let dimensions;
         try {
@@ -76,7 +75,7 @@
 
           iframe.contentWindow.postMessage(
             messageData,
-            'https://loytech-aichatbot.vercel.app/chatbot/'
+            'https://loytech-aichatbot.vercel.app'
           );
         } catch (error) {
           console.error('Invalid JSON string:', e.data);

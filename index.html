@@ -39,12 +39,24 @@
       }
     `);
 
-      iframe.src = 'https://loytech-aichatbot.vercel.app/chatbot';
+      iframe.src = 'https://loytech-aichatbot.vercel.app/chatbot/chatbot';
       iframe.classList.add('chat-frame');
       document.body.appendChild(iframe);
 
+      const getDeviceType = () => {
+        const width = window.innerWidth;
+        if (width <= 768) {
+          return 'mobile';
+        } else if (width <= 1024) {
+          return 'tablet';
+        } else {
+          return 'desktop';
+        }
+      };
+
       window.addEventListener('message', (e) => {
-        if (e.origin !== 'https://loytech-aichatbot.vercel.app') return null;
+        if (e.origin !== 'https://loytech-aichatbot.vercel.app/chatbot')
+          return null;
 
         let dimensions;
         try {
@@ -59,11 +71,12 @@
           const messageData = {
             botid: '6695eb7a4bf2a61fbf9ecb75',
             customerId: customerId || dimensions.customerId,
+            deviceType: getDeviceType(),
           };
 
           iframe.contentWindow.postMessage(
             messageData,
-            'https://loytech-aichatbot.vercel.app/'
+            'https://loytech-aichatbot.vercel.app/chatbot/'
           );
         } catch (error) {
           console.error('Invalid JSON string:', e.data);

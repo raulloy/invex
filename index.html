@@ -3,29 +3,89 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Invex Banco</title>
+    <title>AI Chatbot</title>
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
-    <div class="logo">
-      <h1><span class="invex">invex</span> <span class="banco">Banco</span></h1>
+    <div>
+      <div class="logo">
+        <h1>
+          <span class="invex">AI</span> <span class="banco">Chatbot</span>
+        </h1>
+      </div>
+
+      <div>
+        <button id="removeCustomerIdButton">Remove Customer ID</button>
+      </div>
     </div>
 
-    <script type="text/javascript">
-      (function (d, t) {
-        var v = d.createElement(t),
-          s = d.getElementsByTagName(t)[0];
-        v.onload = function () {
-          window.voiceflow.chat.load({
-            verify: { projectID: '667d062caa805e809ac61dd6' },
-            url: 'https://general-runtime.voiceflow.com',
-            versionID: 'production',
-          });
-        };
-        v.src = 'https://cdn.voiceflow.com/widget/bundle.mjs';
-        v.type = 'text/javascript';
-        s.parentNode.insertBefore(v, s);
-      })(document, 'script');
+    <script>
+      // Function to remove customerId from localStorage
+      const removeCustomerId = () => {
+        localStorage.removeItem('customerId');
+        console.log('customerId removed from localStorage');
+      };
+
+      // Attach event listener to the button
+      document
+        .getElementById('removeCustomerIdButton')
+        .addEventListener('click', removeCustomerId);
+    </script>
+
+    <script>
+      const iframe = document.createElement('iframe');
+
+      const iframeStyles = (styleString) => {
+        const style = document.createElement('style');
+        style.textContent = styleString;
+        document.head.append(style);
+      };
+
+      iframeStyles(`
+        .chat-frame {
+            position: fixed;
+            bottom: 50px;
+            right: 50px;
+            border: none;
+        }
+      `);
+
+      iframe.src = 'loytech-aichatbot.vercel.app/chatbot';
+      iframe.classList.add('chat-frame');
+      document.body.appendChild(iframe);
+
+      window.addEventListener('message', (e) => {
+        if (e.origin !== 'loytech-aichatbot.vercel.app') return null;
+
+        let dimensions;
+        try {
+          dimensions = typeof e.data === 'string' ? JSON.parse(e.data) : e.data;
+          console.log(dimensions);
+          const customerId = localStorage.getItem('customerId');
+
+          if (!customerId && dimensions.customerId) {
+            localStorage.setItem('customerId', dimensions.customerId);
+          }
+
+          const messageData = {
+            botid: '6695eb7a4bf2a61fbf9ecb75',
+            customerId: customerId || dimensions.customerId,
+          };
+
+          iframe.contentWindow.postMessage(
+            messageData,
+            'loytech-aichatbot.vercel.app/'
+          );
+        } catch (error) {
+          console.error('Invalid JSON string:', e.data);
+          return;
+        }
+
+        if (dimensions && typeof dimensions === 'object') {
+          iframe.width = dimensions.width;
+          iframe.height = dimensions.height;
+        }
+      });
     </script>
   </body>
 </html>
